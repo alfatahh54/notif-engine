@@ -5,14 +5,17 @@ const NOTIFICATION_STATUSES = NotificationConfig.statuses;
 
 notificationMail = () => {
 };
+const getValueByPath = (object, path) => {
+  return path.split('.').reduce((acc, key) => acc && acc[key], object);
+}
 
 const replacementHandler = (input, transformationMapping) => {
-  transformationMapping["{{"] = '';
-  transformationMapping["}}"] = '';
-  // console.log(transformationMapping);
-  return input.replace(new RegExp(Object.keys(transformationMapping).join('|'), 'gi'), (matched) => {
-    return transformationMapping[matched];
-  });
+  // transformationMapping["{{"] = '';
+  // transformationMapping["}}"] = '';
+  return input.replace(/{{(.*?)}}/g, (match, path) => {
+    const value = getValueByPath(transformationMapping, path.trim());
+    return value !== undefined ? value : match; // Keep placeholder if value is undefined
+  });;
 };
 
 notificationMail.prototype = {
