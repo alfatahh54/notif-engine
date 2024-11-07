@@ -5,17 +5,22 @@ const NOTIFICATION_STATUSES = NotificationConfig.statuses;
 
 notificationMail = () => {
 };
-const getValueByPath = (object, path) => {
-  return path.split('.').reduce((acc, key) => acc && acc[key], object);
+
+function convertObjectToGlobalVariables(obj) {
+  Object.keys(obj).forEach(key => {
+    global[key] = obj[key];
+  });
 }
 
 const replacementHandler = (input, transformationMapping) => {
-  // transformationMapping["{{"] = '';
-  // transformationMapping["}}"] = '';
+  convertObjectToGlobalVariables(transformationMapping)
   return input.replace(/{{(.*?)}}/g, (match, path) => {
-    const value = getValueByPath(transformationMapping, path.trim());
-    return value !== undefined ? value : match; // Keep placeholder if value is undefined
-  });;
+    try {
+      return eval(path) !== undefined ? eval(path) : match
+    } catch {
+      return undefined
+    }
+  });
 };
 
 notificationMail.prototype = {

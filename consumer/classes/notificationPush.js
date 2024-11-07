@@ -6,12 +6,20 @@ const NOTIFICATION_STATUSES = NotificationConfig.statuses;
 notificationPush = () => {
 };
 
+function convertObjectToGlobalVariables(obj) {
+  Object.keys(obj).forEach(key => {
+    global[key] = obj[key];
+  });
+}
+
 const replacementHandler = (input, transformationMapping) => {
-  transformationMapping["{{"] = '';
-  transformationMapping["}}"] = '';
-  // console.log(transformationMapping);
-  return input.replace(new RegExp(Object.keys(transformationMapping).join('|'), 'gi'), (matched) => {
-    return transformationMapping[matched];
+  convertObjectToGlobalVariables(transformationMapping)
+  return input.replace(/{{(.*?)}}/g, (match, path) => {
+    try {
+      return eval(path) !== undefined ? eval(path) : match
+    } catch {
+      return undefined
+    }
   });
 };
 
