@@ -6,11 +6,11 @@ const NOTIFICATION_STATUSES = NotificationConfig.statuses;
 notificationMail = () => {
 };
 
-function convertObjectToGlobalVariables(obj) {
+const convertObjectToGlobalVariables = (obj) => {
   Object.keys(obj).forEach(key => {
     global[key] = obj[key];
   });
-}
+};
 
 const replacementHandler = (input, transformationMapping) => {
   convertObjectToGlobalVariables(transformationMapping)
